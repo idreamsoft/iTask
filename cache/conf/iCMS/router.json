@@ -1,0 +1,186 @@
+{
+    "user": [
+        "/user",
+        "/user.php"
+    ],
+    "user:home": [
+        "/user/home",
+        "/user.php?do=home"
+    ],
+    "user:publish": [
+        "/user/publish",
+        "/user.php?do=manage&pg=publish"
+    ],
+    "user:article": [
+        "/user/article",
+        "/user.php?do=manage&pg=article"
+    ],
+    "user:category": [
+        "/user/category",
+        "/user.php?do=manage&pg=category"
+    ],
+    "user:comment": [
+        "/user/comment",
+        "/user.php?do=manage&pg=comment"
+    ],
+    "user:inbox": [
+        "/user/inbox",
+        "/user.php?do=manage&pg=inbox"
+    ],
+    "user:inbox:uid": [
+        "/user/inbox/{uid}",
+        "/user.php?do=manage&pg=inbox&user={uid}"
+    ],
+    "user:manage": [
+        "/user/manage",
+        "/user.php?do=manage"
+    ],
+    "user:manage:favorite": [
+        "/user/manage/favorite",
+        "/user.php?do=manage&pg=favorite"
+    ],
+    "user:manage:fans": [
+        "/user/manage/fans",
+        "/user.php?do=manage&pg=fans"
+    ],
+    "user:manage:follow": [
+        "/user/manage/follow",
+        "/user.php?do=manage&pg=follow"
+    ],
+    "user:profile": [
+        "/user/profile",
+        "/user.php?do=profile"
+    ],
+    "user:profile:base": [
+        "/user/profile/base",
+        "/user.php?do=profile&pg=base"
+    ],
+    "user:profile:avatar": [
+        "/user/profile/avatar",
+        "/user.php?do=profile&pg=avatar"
+    ],
+    "user:profile:setpassword": [
+        "/user/profile/setpassword",
+        "/user.php?do=profile&pg=setpassword"
+    ],
+    "user:profile:bind": [
+        "/user/profile/bind",
+        "/user.php?do=profile&pg=bind"
+    ],
+    "user:profile:custom": [
+        "/user/profile/custom",
+        "/user.php?do=profile&pg=custom"
+    ],
+    "api": [
+        "/api",
+        "iCMS_API"
+    ],
+    "api:comment": [
+        "/api/comment",
+        "iCMS_API?app=comment"
+    ],
+    "api:favorite": [
+        "/api/favorite",
+        "iCMS_API?app=favorite"
+    ],
+    "api:search": [
+        "/api/search",
+        "iCMS_API?app=search"
+    ],
+
+    "api:public:seccode": [
+        "/api/public/seccode",
+        "iCMS_API?app=public&do=seccode"
+    ],
+    "api:public:agreement": [
+        "/api/public/agreement",
+        "iCMS_API?app=public&do=agreement"
+    ],
+
+    "api:user": [
+        "/api/user",
+        "iCMS_API?app=user"
+    ],
+    "api:user:ucard": [
+        "/api/user/ucard",
+        "iCMS_API?app=user&do=ucard"
+    ],
+    "api:user:register": [
+        "/api/user/register",
+        "iCMS_API?app=user&do=register"
+    ],
+    "api:user:logout": [
+        "/api/user/logout",
+        "iCMS_API?app=user&do=logout"
+    ],
+    "api:user:login": [
+        "/api/user/login",
+        "iCMS_API?app=user&do=login"
+    ],
+    "api:user:login:qq": [
+        "/api/user/login/qq",
+        "iCMS_API?app=user&do=login&sign=qq"
+    ],
+    "api:user:login:wb": [
+        "/api/user/login/wb",
+        "iCMS_API?app=user&do=login&sign=wb"
+    ],
+    "api:user:login:wx": [
+        "/api/user/login/wx",
+        "iCMS_API?app=user&do=login&sign=wx"
+    ],
+    "api:user:findpwd": [
+        "/api/user/findpwd",
+        "iCMS_API?app=user&do=findpwd"
+    ],
+    "api:user:follow": [
+        "/api/user/follow",
+        "iCMS_API?app=user&do=follow"
+    ],
+    "api:user:check": [
+        "/api/user/check",
+        "iCMS_API?app=user&do=check"
+    ],
+
+    "uid:home": [
+        "/{uid}/",
+        "/user.php?do=home&uid={uid}"
+    ],
+    "uid:comment": [
+        "/{uid}/comment/",
+        "/user.php?do=comment&uid={uid}"
+    ],
+    "uid:share": [
+        "/{uid}/share/",
+        "/user.php?do=share&uid={uid}"
+    ],
+    "uid:favorite": [
+        "/{uid}/favorite/",
+        "/user.php?do=favorite&uid={uid}"
+    ],
+    "uid:fans": [
+        "/{uid}/fans/",
+        "/user.php?do=fans&uid={uid}"
+    ],
+    "uid:follower": [
+        "/{uid}/follower/",
+        "/user.php?do=follower&uid={uid}"
+    ],
+    "uid:cid": [
+        "/{uid}/{cid}/",
+        "/user.php?do=home&uid={uid}&cid={cid}"
+    ],
+    "uid:favorite:id": [
+        "/{uid}/favorite/{id}/",
+        "/user.php?do=favorite&uid={uid}&id={id}"
+    ],
+
+    "favorite:id": [
+        "/favorite/{id}/",
+        "iCMS_API?app=favorite&id={id}"
+    ],
+    "comment:id": [
+        "/comment/{id}/",
+        "iCMS_API?app=comment&id={id}"
+    ]
+}
