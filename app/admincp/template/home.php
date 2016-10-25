@@ -27,7 +27,7 @@ admincp::head();
         <li><a href="/admincp.php?app=task&do=my"><i class="fa fa-tasks"></i> <span>我的任务</span></a></li>
         <li><a href="/admincp.php?app=task&do=my"><i class="fa fa-dashboard"></i> <span>数据查看</span></a></li>
         <li><a href="/admincp.php?app=task&do=my"><i class="fa fa-money"></i> <span>我的佣金</span></a></li>
-        <li><a href="/admincp.php?app=task&do=my"><i class="fa fa-gift"></i> <span>积分交换</span></a></li>
+        <li><a href="/admincp.php?app=task&do=my"><i class="fa fa-gift"></i> <span>积分兑换</span></a></li>
         <li><a href="/admincp.php?app=task&do=my"><i class="fa fa-user"></i> <span>我的资料</span></a></li>
         <li class="divider"><div style="margin-top:50px;"></div></li>
         <li><a href="/admincp.php?app=task&do=my"><i class="fa fa-dashboard"></i> <span>任务管理</span></a></li>
@@ -65,7 +65,7 @@ admincp::head();
         <tbody>
           <tr>
             <td>1</td>
-            <td>转载类任务</td>
+            <td>转载类</td>
             <td>根据要求转载相关文章
               <br />
               <span class="label label-info">当前需求：10400条</span>
