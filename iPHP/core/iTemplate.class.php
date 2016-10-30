@@ -377,6 +377,7 @@ class iTemplate_Compiler extends iTemplate {
 	public $_sectionelse_stack        = array();	// keeps track of whether section had 'else' part
 	public $_iPHP_else_stack          = false;	// keeps track of whether section had 'else' part
 	public $_iPHP_stack               = array();
+	public $_iPHP_compile          	  = null;
 	public $_switch_stack             = array();
 	public $_tag_stack                = array();
 	public $_require_stack            = array();	// stores all files that are "required" inside of the template
@@ -593,8 +594,13 @@ class iTemplate_Compiler extends iTemplate {
 				foreach ($_args as $key => $value){
 					$arg_list[] = "'$key' => $value";
 				}
-
-				return '<?php $this->_run_iPHP(array('.implode(',', (array)$arg_list).')); ?>'.$compile_iPHP;
+				$code = '<?php $this->_run_iPHP(array('.implode(',', (array)$arg_list).')); ?>';
+				if(isset($_args['if'])){
+					$this->_iPHP_compile = $compile_iPHP;
+					unset($compile_iPHP);
+					return $code;
+				}
+				return $code.$compile_iPHP;
 				break;
 			case iPHP_TPL_VAR.'else':
 				$this->_iPHP_else_stack = true;
@@ -726,7 +732,12 @@ class iTemplate_Compiler extends iTemplate {
 				return $this->_compile_if($arguments, true);
 				break;
 			case '/if':
-				return "<?php }; ?>";
+				$code = "<?php }; ?>";
+				if($this->_iPHP_compile){
+					$code.= $this->_iPHP_compile;
+					unset($this->_iPHP_compile);
+				}
+				return $code;
 				break;
 			case 'assign':
 				$_args = $this->_parse_arguments($arguments);
@@ -854,6 +865,7 @@ class iTemplate_Compiler extends iTemplate {
 					}
 					break;
 				case 2:
+					$quote = substr(trim($value),0,1);
 					$value = $this->_dequote($value);
 
 					if ($value != '='){
@@ -867,14 +879,20 @@ class iTemplate_Compiler extends iTemplate {
 						if(strpos($value,'"') !==false||strpos($value,"'") !==false){
 							$value =  addslashes($value);
 						}
-						if(strpos($value,'{$') !==false){ //对 {$xxx} 进行简单的替换
-							$_key   = substr(strrchr($value,'{$'),2);
-							$pos    = strpos ($_key,'}');
-							$_key   = substr($_key,0,$pos);
-							$_value = $this->_vars[$_key];
-							$_result[$a_name] = preg_replace ("/\{\\$(.*?)\}/",$_value,$value);
-						}else if(preg_match_all('/(?:(' . $this->_var_regexp . '|' . $this->_svar_regexp . ')(' . $this->_mod_regexp . '*))(?:\s+(.*))?/xs', $value, $_variables)){
-							$_result[$a_name] = $this->_parse_variables($_variables[1], $_variables[2]);
+
+						if(preg_match_all('/(?:(' . $this->_var_regexp . '|' . $this->_svar_regexp . ')(' . $this->_mod_regexp . '*))(?:\s+(.*))?/xs', $value, $_variables)){
+							$_varname = $this->_parse_variables($_variables[1], $_variables[2],false);
+							// $_result[$a_name] = $this->_parse_variables($_variables[1], $_variables[2],false);
+							if(substr(trim($value),0,1)!="$"){
+								$value = stripslashes($value);
+								$replace = array();
+								foreach ((array)$_varname as $_vkey => $_vvvv) {
+									$replace[]="{$quote}.{$_vvvv}.{$quote}";
+								}
+								$_result[$a_name] = $quote.str_replace ($_variables[1],$replace,$value).$quote;
+							}else{
+								$_result[$a_name] = implode('.', $_varname);
+							}
 						}else{
 							if(strpos($value,'\"') !==false||strpos($value,"\'") !==false){
 								$value =  stripslashes($value);
@@ -902,21 +920,22 @@ class iTemplate_Compiler extends iTemplate {
 		return $_result;
 	}
 
-	function _parse_variables($variables, $modifiers){
-		$_result = "";
+	function _parse_variables($variables, $modifiers,$implode=true){
+		$_result = array();
 		foreach($variables as $key => $value){
 			$tag_variable = trim($variables[$key]);
 			if(!empty($this->default_modifiers) && !preg_match('!(^|\|)templatelite:nodefaults($|\|)!',$modifiers[$key])){
 				$_default_mod_string = implode('|',(array)$this->default_modifiers);
 				$modifiers[$key] = empty($modifiers[$key]) ? $_default_mod_string : $_default_mod_string . '|' . $modifiers[$key];
 			}
+
 			if (empty($modifiers[$key])){
-				$_result .= $this->_parse_variable($tag_variable).'.';
+				$_result[]= $this->_parse_variable($tag_variable);
 			}else{
-				$_result .= $this->_parse_modifier($this->_parse_variable($tag_variable), $modifiers[$key]).'.';
+				$_result[]= $this->_parse_modifier($this->_parse_variable($tag_variable), $modifiers[$key]);
 			}
 		}
-		return substr($_result, 0, -1);
+		return $implode?implode('.', $_result):$_result;
 	}
 
 	function _parse_variable($variable){

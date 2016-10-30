@@ -62,6 +62,8 @@ class iPatch {
 	}
 	public static function update() {
 		@set_time_limit(0);
+		// Unzip uses a lot of memory
+		@ini_set('memory_limit', '256M');
 		iPHP::import(iPHP_LIB . '/pclzip.class.php'); //加载zip操作类
 		$zipFile = PATCH_DIR . '/' . self::$zipName; //临时文件
 		$msg = '正在对 [' . self::$zipName . '] 更新包进行解压缩<iCMS>';
@@ -135,6 +137,7 @@ class iPatch {
 		}
 		$msg .= '清除临时文件!<iCMS>注:原文件备份在 [' . $bakDir . '] 目录<iCMS>如没有特殊用处请删除此目录!<iCMS>';
 		iFS::rmdir(PATCH_DIR, true, 'version.txt');
+        $msg = str_replace(iPATH,'iPHP://',$msg);
 		return $msg;
 	}
 	public static function run() {

@@ -23,20 +23,20 @@ admincp::head();
     </div>
     <div class="navbar">
       <ul>
-        <li><a href="/admincp.php?app=task&do=my"><i class="fa fa-send"></i> <span>开始任务</span></a></li>
-        <li><a href="/admincp.php?app=task&do=my"><i class="fa fa-tasks"></i> <span>我的任务</span></a></li>
-        <li><a href="/admincp.php?app=task&do=my"><i class="fa fa-dashboard"></i> <span>数据查看</span></a></li>
-        <li><a href="/admincp.php?app=task&do=my"><i class="fa fa-money"></i> <span>我的佣金</span></a></li>
-        <li><a href="/admincp.php?app=task&do=my"><i class="fa fa-gift"></i> <span>积分兑换</span></a></li>
-        <li><a href="/admincp.php?app=task&do=my"><i class="fa fa-user"></i> <span>我的资料</span></a></li>
+        <li><a href="/index.php?app=task&do=start"><i class="fa fa-send"></i> <span>开始任务</span></a></li>
+        <li><a href="/index.php?app=task&do=my"><i class="fa fa-tasks"></i> <span>我的任务</span></a></li>
+        <li><a href="/index.php?app=dashboard"><i class="fa fa-dashboard"></i> <span>数据查看</span></a></li>
+        <li><a href="/index.php?app=money"><i class="fa fa-money"></i> <span>我的佣金</span></a></li>
+        <li><a href="/index.php?app=gift"><i class="fa fa-gift"></i> <span>积分兑换</span></a></li>
+        <li><a href="/index.php?app=profile"><i class="fa fa-user"></i> <span>我的资料</span></a></li>
         <li class="divider"><div style="margin-top:50px;"></div></li>
-        <li><a href="/admincp.php?app=task&do=my"><i class="fa fa-dashboard"></i> <span>任务管理</span></a></li>
-        <li><a href="/admincp.php?app=task&do=my"><i class="fa fa-edit"></i> <span>添加任务</span></a></li>
-        <li><a href="/admincp.php?app=task&do=my"><i class="fa fa-dashboard"></i> <span>任务分类</span></a></li>
-        <li><a href="/admincp.php?app=task&do=my"><i class="fa fa-edit"></i> <span>添加分类</span></a></li>
-        <li><a href="/admincp.php?app=task&do=my"><i class="fa fa-users"></i> <span>用户管理</span></a></li>
-        <li><a href="/admincp.php?app=task&do=my"><i class="fa fa-dashboard"></i> <span>数据查看</span></a></li>
-        <li><a href="/admincp.php?app=task&do=my"><i class="fa fa-money"></i> <span>财务管理</span></a></li>
+        <li><a href="/index.php?app=task"><i class="fa fa-dashboard"></i> <span>任务管理</span></a></li>
+        <li><a href="/index.php?app=task&do=add"><i class="fa fa-edit"></i> <span>添加任务</span></a></li>
+        <li><a href="/index.php?app=category"><i class="fa fa-dashboard"></i> <span>任务分类</span></a></li>
+        <li><a href="/index.php?app=category&do=add"><i class="fa fa-edit"></i> <span>添加分类</span></a></li>
+        <li><a href="/index.php?app=users"><i class="fa fa-users"></i> <span>用户管理</span></a></li>
+        <li><a href="/index.php?app=dashboard"><i class="fa fa-dashboard"></i> <span>数据查看</span></a></li>
+        <li><a href="/index.php?app=money"><i class="fa fa-money"></i> <span>财务管理</span></a></li>
         <li class="last"></li>
       </ul>
     </div>
@@ -87,7 +87,7 @@ admincp::head();
                 </span>
               </div>
             </td>
-            <td><button class="btn btn-large btn-primary" type="button">开始</button></td>
+            <td><a href="/index.php?app=task&do=start&type=1" class="btn btn-large btn-primary" type="button">开始</a></td>
           </tr>
           <tr>
             <td>2</td>
@@ -113,7 +113,7 @@ admincp::head();
                 </span>
               </div>
             </td>
-            <td>开始</td>
+            <td><a href="/index.php?app=task&do=start&type=2" class="btn btn-large btn-primary" type="button">开始</a></td>
           </tr>
           <tr>
             <td>3</td>
@@ -139,7 +139,7 @@ admincp::head();
                 </span>
               </div>
             </td>
-            <td>开始</td>
+            <td><a href="/index.php?app=task&do=start&type=3" class="btn btn-large btn-primary" type="button">开始</a></td>
           </tr>
           <tr>
             <td>4</td>
@@ -165,7 +165,7 @@ admincp::head();
                 </span>
               </div>
             </td>
-            <td>开始</td>
+            <td><a href="/index.php?app=task&do=start&type=4" class="btn btn-large btn-primary" type="button">开始</a></td>
           </tr>
           <tr>
             <td>5</td>
@@ -191,7 +191,7 @@ admincp::head();
                 </span>
               </div>
             </td>
-            <td>开始</td>
+            <td><a href="/index.php?app=task&do=start&type=5" class="btn btn-large btn-primary" type="button">开始</a></td>
           </tr>
         </tbody>
       </table>

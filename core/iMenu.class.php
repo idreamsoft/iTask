@@ -17,14 +17,17 @@ class iMenu {
         $this->get_cache();
         // $this->menu_array(true);
 	}
+    function menu_data($path){
+        $json  = file_get_contents($path);
+        $json  = str_replace("<?php defined('iPHP') OR exit('What are you doing?');?>\n", '', $json);
+        return json_decode($json,ture);
+    }
 
     function menu_array($cache=false){
         $variable = array();
         foreach (glob(iPHP_APP_DIR."/*/etc/iMenu.*.php",GLOB_NOSORT) as $index=> $filename) {
-            $json  = file_get_contents($filename);
-            $json = str_replace("<?php defined('iPHP') OR exit('What are you doing?');?>\n", '', $json);
-            $array = json_decode($json,ture);
-            $array && $variable[]= $this->menu_id($array,$index,$filename);
+            $array = $this->menu_data($filename);
+            $array && $variable[]= $this->menu_id($array,$index);
         }
         if($variable){
             $variable = call_user_func_array('array_merge_recursive',$variable);
@@ -95,7 +98,7 @@ class iMenu {
             }
         }
     }
-    function menu_id($variable,$index,$a=null){
+    function menu_id($variable,$index=0){
         if(empty($variable)) return;
         if(is_array($variable)){
             $i=0;
@@ -104,7 +107,7 @@ class iMenu {
 
                 isset($value['order']) OR $value['order'] = $index*100+$i;
                 if($value['children']){
-                    $value['children'] = $this->menu_id($value['children'],$i,$a);
+                    $value['children'] = $this->menu_id($value['children'],$i);
                 }
                 $variable[$key] = $value;
                 if($value['id']){
@@ -151,6 +154,19 @@ class iMenu {
             }
         }
     }
+    function app_memu($app){
+        $path  = iPHP_APP_DIR."/{$app}/etc/iMenu.main.php";
+        $array = $this->menu_data($path);
+        $array = $this->menu_id($array);
+        $key   = $this->search_href();
+        $array = $array[$key]['children'][$app]['children'];
+
+        foreach((array)$array AS $_array) {
+            $nav.= $this->li('sidebar',$_array,0);
+        }
+        return $nav;
+
+    }
 	function sidebar(){
         $key= $this->search_href();
         $menu_array = $this->menu_array[$key]['children'];
@@ -176,6 +192,7 @@ class iMenu {
 	function li($mType,$a,$level = 0){
 		// if(!admincp::MP($id)) return false;
 
+        $a = (array)$a;
 		if($a['-']){
 			return '<li data-order="'.$a['order'].'" class="'.(($level||$mType=='sidebar')?'divider':'divider-vertical').'"></li>';
 		}

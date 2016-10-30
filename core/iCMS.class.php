@@ -17,7 +17,7 @@ class iCMS extends iPHP{
 
 	public static function init(){
         self::$config = iPHP::config();
-        iURL::init(self::$config['router']);
+        iURL::init(self::$config);
 
         define('iCMS_DIR',       self::$config['router']['DIR']);
         define('iCMS_URL',       self::$config['router']['URL']);

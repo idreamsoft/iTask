@@ -17,6 +17,7 @@ define('ARRAY_N', 'ARRAY_N');
 
 defined('SAVEQUERIES') OR define('SAVEQUERIES', true);
 defined('iPHP_DB_PORT') OR define('iPHP_DB_PORT', '3306');
+defined('iPHP_DB_NEW_LINK') OR define('iPHP_DB_NEW_LINK', null);
 
 class iDB{
     public static $show_errors = false;
@@ -29,6 +30,7 @@ class iDB{
     public static $num_rows;
     public static $insert_id;
     public static $config = null;
+    public static $dbFlag = 'iPHP_DB';
 
     private static $collate;
     private static $time_start;
@@ -41,8 +43,8 @@ class iDB{
 
         defined('iPHP_DB_COLLATE') &&self::$collate = iPHP_DB_COLLATE;
 
-        if(isset($GLOBALS['iPHP_DB'])){
-            self::$link = $GLOBALS['iPHP_DB'];
+        if(isset($GLOBALS[self::$dbFlag])){
+            self::$link = $GLOBALS[self::$dbFlag];
             if(self::$link){
                 if(mysql_ping(self::$link))
                     return self::$link;
@@ -59,7 +61,7 @@ class iDB{
             'PREFIX_TAG' => iPHP_DB_PREFIX_TAG
         );
 
-        self::$link = @mysql_connect(self::$config['HOST'].':'.self::$config['PORT'], self::$config['USER'], self::$config['PASSWORD']);
+        self::$link = @mysql_connect(self::$config['HOST'].':'.self::$config['PORT'], self::$config['USER'], self::$config['PASSWORD'],iPHP_DB_NEW_LINK);
 
         if($flag==='link'){
             return self::$link;
@@ -67,7 +69,7 @@ class iDB{
 
         self::$link OR self::bail("<h1>数据库连接失败</h1><p>请检查 <em><strong>config.php</strong></em> 的配置是否正确!</p><ul><li>请确认主机支持MySQL?</li><li>请确认用户名和密码正确?</li><li>请确认主机名正确?(一般为localhost)</li></ul><p>如果你不确定这些情况,请询问你的主机提供商.如果你还需要帮助你可以随时浏览 <a href='http://www.iiiphp.com'>iPHP 支持论坛</a>.</p>");
 
-        $GLOBALS['iPHP_DB'] = self::$link;
+        $GLOBALS[self::$dbFlag] = self::$link;
         self::pre_set();
         if($flag===null){
             self::select_db();

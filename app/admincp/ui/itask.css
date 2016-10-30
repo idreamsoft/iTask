@@ -1,21 +1,21 @@
 body { background-color: #fff; }
 .hr5 { margin: 5px 0px; }
 .hr5 { margin: 10px 0px; }
-.conta-iner { position: relative; height: auto; margin: 0px 10px; }
+.conta-iner { position: relative; height: auto; margin: 0px 30px; }
 .header { position: relative; height: 220px; border-bottom: solid 1px #dbdbbd; background: url("./img/ChMkJ1bKwXmIFPU6AANfTrpJ73QAALGYwJ_ksEAA19m918.jpg") repeat-x scroll center transparent; }
 .header h1 { font-family: Tahoma, Helvetica, Arial, Sans-serif; color: #fff; position: absolute; left: 20%; top: 30px; }
-.header  .userinfo { position: absolute; bottom: 10px; left: 280px; }
-.header  .userinfo h3 { font-size: 24px; color: #fff; }
+.header .userinfo { position: absolute; bottom: 10px; left: 240px; }
+.header .userinfo h3 { font-size: 24px; color: #fff; }
 .header .userinfo p { color: #eee; font-size: 14px; height: 18px; overflow: hidden; float: left; padding-right: 30px; clear: both; margin-top: 5px; }
-.sidebar {    /*border: solid 1px #ccc;*/ box-shadow: #ccc 0px 0px 15px 0px; border-radius: 10px; height: 100%; width: 200px; background-color: #262626; float: left; position: absolute; top: -140px; left: 50px; }
-.sidebar  .avatar img { width: 200px; height: 140px; width: 100%; border-radius: 10px 10px 0 0; }
+.sidebar {    /*border: solid 1px #ccc;*/ box-shadow: #ccc 0px 0px 15px 0px; border-radius: 10px; height: 100%; width: 200px; background-color: #262626; float: left; position: absolute; top: -140px; left: 0px; }
+.sidebar .avatar img { width: 200px; height: 140px; width: 100%; border-radius: 10px 10px 0 0; }
 .sidebar .navbar { }
 .sidebar .navbar ul li { display: block; position: relative; line-height: 24px; border-bottom: solid #161616 1px; border-top: solid #323232 1px; }
 .sidebar .navbar ul li:last-child { border-bottom: 0px; }
 .sidebar .navbar ul li i { font-size: 18px; margin-right: 2px; width: 20px; }
 .sidebar .navbar ul li a { color: #fff; padding: 10px 0 8px 10px; display: block; font-weight: bold; }
-.main { height: 800px;    /*background-color: #ccc;*/ margin-left: 250px; padding: 8px 10px; }
-.main .notice { width: 95%; height: 35px; line-height: 35px; }
+.main { height: 800px;    /*background-color: #ccc;*/ margin-left: 200px; padding: 8px 10px; }
+.main .notice {}
 .main .notice b { float: left; margin-right: 10px; }
 .taskList h3 { color: #333; border-bottom: solid #bdbdbd 3px; }
 .reward { }

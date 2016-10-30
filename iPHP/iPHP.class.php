@@ -41,7 +41,8 @@ class iPHP {
 			$fi = iFS::name(__SELF__);
 			$app = $fi['name'];
 		}
-		if (!in_array($app, self::$apps) && iPHP_DEBUG) {
+
+		if (!in_array($app, (array)self::$apps) && iPHP_DEBUG) {
 			iPHP::throw404('运行出错！找不到应用程序: <b>' . $app . '</b>', '0001');
 		}
 		self::$app_path = iPHP_APP_DIR . '/' . $app;
@@ -488,36 +489,51 @@ class iPHP {
 			if (empty($file_type)) {
 				$file_type = $app_name;
 				$app_name = $app_dir;
+			}else{
+				if($file_type=='admincp'){
+					$file_type='subadmincp';
+					$obj_name = $app_dir.$app_name . 'Admincp';
+					// $app_name = $app_dir.'.'.$app_name;
+				}
 			}
 		}
-		switch ($file_type) {
-		case 'class':$obj_name = $app_name;
-			break;
-		case 'admincp':
-			$obj_name = $app_name . 'Admincp';
-			break;
-		// $args===null && $args = "static";
-		case 'table':
-			$obj_name = $app_name . 'Table';
-			$args = "static";
-			break;
-		case 'func':
-			$args = "include";
-			break;
-		default:$obj_name = $app_name . 'App';
-			break;
-		}
 
-		self::import(iPHP_APP_DIR . '/' . $app_dir . '/' . $app_name . '.' . $file_type . '.php');
+		$app_file = $app_name.'.'.$file_type;
+
+		switch ($file_type) {
+			case 'class':
+				$obj_name = $app_name;
+				break;
+			case 'admincp':
+				$obj_name = $app_name . 'Admincp';
+				break;
+			case 'subadmincp':
+				$app_file = $app_dir.'.'.$app_name.'.admincp';
+				break;
+			case 'table':
+				$obj_name = $app_name . 'Table';
+				$args = "static";
+				break;
+			case 'func':
+				$args = "include";
+				break;
+			default:$obj_name = $app_name . 'App';
+				break;
+		}
+		$path = iPHP_APP_DIR . '/' . $app_dir . '/' . $app_file . '.php';
+		if (@is_file($path)) {
+			self::import($path);
+		}else{
+			return false;
+		}
 
 		if ($args === "include" || $args === "static") {
 			return;
 		}
 
-		if ($arg !== NULL) {
-			return call_user_func_array($obj_name, (array) $args);
-		}
-		return new $obj_name();
+		$obj = new $obj_name();
+		$args && call_user_func_array(array($obj, '__construct'), (array) $args);
+		return $obj;
 	}
 	public static function vendor($name, $args = null) {
 		iPHP::import(iPHP_LIB . '/Vendor.' . $name . '.php');
@@ -623,6 +639,7 @@ class iPHP {
 			// Redirection 3xx
 			301 => 'Moved Permanently',
 			302 => 'Moved Temporarily ', // 1.1
+            304 => 'Not Modified',
 			// Client Error 4xx
 			400 => 'Bad Request',
 			403 => 'Forbidden',
@@ -850,10 +867,16 @@ class iPHP {
 				$val['url'] && $func = "iTOP.location.href='{$val['url']}';";
 				$val['src'] && $func = "iTOP.$('#iPHP_FRAME').attr('src','{$val['src']}');return false;";
 				$val['target'] && $func = "iTOP.window.open('{$val['url']}','_blank');";
+                if($val['close']===false){
+                    $func.= "return false;";
+                }
+                $val['time'] && $s = $val['time'];
 
-				$buttonA[] = "{" . $id . "value:'" . $val['text'] . "',callback:function(){" . $func . "}}";
-				$val['next'] && $auto_func = $func;
-			}
+                if($func){
+                    $buttonA[]="{".$id."value:'".$val['text']."',callback:function(){".$func."}}";
+                    $val['next'] && $auto_func = $func;
+                }
+            }
 			//$buttonA[] = $okbtn;
 			$button = implode(",", $buttonA);
 		}
@@ -968,34 +991,20 @@ function iPHP_ERROR_HANDLER($errno, $errstr, $errfile, $errline) {
 	defined('E_RECOVERABLE_ERROR') OR define('E_RECOVERABLE_ERROR', 4096);
 	$html = "<pre>\n<b>";
 	switch ($errno) {
-	case E_ERROR:$html .= "Error";
-		break;
-	case E_WARNING:$html .= "Warning";
-		break;
-	case E_PARSE:$html .= "Parse Error";
-		break;
-	case E_NOTICE:$html .= "Notice";
-		break;
-	case E_CORE_ERROR:$html .= "Core Error";
-		break;
-	case E_CORE_WARNING:$html .= "Core Warning";
-		break;
-	case E_COMPILE_ERROR:$html .= "Compile Error";
-		break;
-	case E_COMPILE_WARNING:$html .= "Compile Warning";
-		break;
-	case E_USER_ERROR:$html .= "iPHP Error";
-		break;
-	case E_USER_WARNING:$html .= "iPHP Warning";
-		break;
-	case E_USER_NOTICE:$html .= "iPHP Notice";
-		break;
-	case E_STRICT:$html .= "Strict Notice";
-		break;
-	case E_RECOVERABLE_ERROR:$html .= "Recoverable Error";
-		break;
-	default:$html .= "Unknown error ($errno)";
-		break;
+        case E_ERROR:              $html.="Error";                  break;
+        case E_WARNING:            $html.="Warning";                break;
+        case E_PARSE:              $html.="Parse Error";            break;
+        case E_NOTICE:             $html.="Notice";                 break;
+        case E_CORE_ERROR:         $html.="Core Error";             break;
+        case E_CORE_WARNING:       $html.="Core Warning";           break;
+        case E_COMPILE_ERROR:      $html.="Compile Error";          break;
+        case E_COMPILE_WARNING:    $html.="Compile Warning";        break;
+        case E_USER_ERROR:         $html.="iPHP Error";             break;
+        case E_USER_WARNING:       $html.="iPHP Warning";           break;
+        case E_USER_NOTICE:        $html.="iPHP Notice";            break;
+        case E_STRICT:             $html.="Strict Notice";          break;
+        case E_RECOVERABLE_ERROR:  $html.="Recoverable Error";      break;
+        default:                   $html.="Unknown error ($errno)"; break;
 	}
 	$html .= ":</b> $errstr\n";
 	if (function_exists('debug_backtrace')) {
@@ -1018,22 +1027,22 @@ function iPHP_ERROR_HANDLER($errno, $errstr, $errfile, $errline) {
 		exit;
 	}
 	if ($_POST) {
-		if($_POST['ajax']){
-			$array = array('code'=>'0','msg'=>$html);
-			echo json_encode($array);
-		}else{
-			$html = str_replace(array("\r", "\\", "\"", "\n", "<b>", "</b>", "<pre>", "</pre>"), array(' ', "\\\\", "\\\"", '\n', ''), $html);
-			echo '<script>top.alert("' . $html . '")</script>';
-		}
-		exit;
-	}
-	@header('HTTP/1.1 500 Internal Server Error');
-	@header('Status: 500 Internal Server Error');
-	@header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
-	@header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
-	@header("Cache-Control: no-store, no-cache, must-revalidate");
-	@header("Cache-Control: post-check=0, pre-check=0", false);
-	@header("Pragma: no-cache");
+        if($_POST['ajax']){
+            $array = array('code'=>'0','msg'=>$html);
+            echo json_encode($array);
+        }else{
+            $html = str_replace(array("\r", "\\", "\"", "\n", "<b>", "</b>", "<pre>", "</pre>"), array(' ', "\\\\", "\\\"", '\n', ''), $html);
+            echo '<script>top.alert("' . $html . '")</script>';
+        }
+        exit;
+    }
+    @header('HTTP/1.1 500 Internal Server Error');
+    @header('Status: 500 Internal Server Error');
+    @header("Expires: Mon, 26 Jul 1997 05:00:00 GMT");
+    @header("Last-Modified: " . gmdate("D, d M Y H:i:s") . " GMT");
+    @header("Cache-Control: no-store, no-cache, must-revalidate");
+    @header("Cache-Control: post-check=0, pre-check=0", false);
+    @header("Pragma: no-cache");
 	$html = str_replace("\n", '<br />', $html);
 	exit($html);
 }

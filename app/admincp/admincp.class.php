@@ -15,7 +15,7 @@ defined('iPHP') OR exit('What are you doing?');
 define('iCMS_SUPERADMIN_UID', '1');
 define('__ADMINCP__', __SELF__ . '?app');
 define('ACP_PATH', iPHP_APP_DIR . '/admincp');
-define('ACP_HOST', "http://" . $_SERVER['HTTP_HOST']);
+define('ACP_HOST', (($_SERVER['SERVER_PORT'] == 443)?'https':'http')."://" . $_SERVER['HTTP_HOST']);
 
 iDB::$show_errors = true;
 iPHP::$dialog['title'] = 'iCMS';
@@ -23,9 +23,9 @@ iPHP::$dialog['title'] = 'iCMS';
 iCMS::core('Menu');
 iCMS::core('Member');
 
-iMember::$LOGIN_TPL = ACP_PATH;
-iMember::$AUTH = 'ADMIN_AUTH';
-iMember::$AJAX = iPHP::PG('ajax');
+iMember::$LOGIN_PAGE = ACP_PATH.'/template/admincp.login.php';
+iMember::$AUTH       = 'ADMIN_AUTH';
+iMember::$AJAX       = iPHP::PG('ajax');
 
 $_GET['do'] == 'seccode' && admincp::get_seccode();
 
@@ -43,7 +43,7 @@ class admincp {
 	public static $APP_ARGS = NULL;
 
 	public static function init() {
-		// self::check_seccode(); //验证码验证
+		self::check_seccode(); //验证码验证
 		iMember::checkLogin(); //用户登陆验证
 		self::$menu = new iMenu(); //初始化菜单
 		self::MP('ADMINCP', 'page'); //检查是否有后台权限
@@ -72,12 +72,13 @@ class admincp {
 		self::init();
 		$app = $_GET['app'];
 		$app OR $app = 'home';
-		//in_array($app, self::$apps) OR iPHP::throwException('运行出错！找不到应用程序:' . $app, 1001);
 		$do OR $do = $_GET['do'] ? (string) $_GET['do'] : 'iCMS';
 		if ($_POST['action']) {
 			$do = $_POST['action'];
 			$prefix = 'ACTION_';
 		}
+
+		strpos($app, '..') === false OR exit('what the fuck');
 
 		self::$APP_NAME = $app;
 		self::$APP_DO = $do;
@@ -85,14 +86,18 @@ class admincp {
 		self::$APP_PATH = ACP_PATH;
 		self::$APP_TPL = ACP_PATH . '/template';
 		self::$APP_FILE = ACP_PATH . '/' . $app . '.app.php';
+		$appName = self::$APP_NAME . 'App';
 
-		// $ownAdmincp = APPS::check($app,"admincp");
-		// if ($ownAdmincp) {
-		// 	self::$APP_PATH = iPHP_APP_DIR . '/' . $app;
-		// 	self::$APP_TPL = self::$APP_PATH . '/admincp';
-		// 	self::$APP_FILE = self::$APP_PATH . '/' . $app . '.admincp.php';
-		// }
-		strpos($app, '..') === false OR exit('what the fuck');
+		iCMS::app('apps.class', 'static');
+		$ownApp = APPS::check($app,"admincp");
+		if ($ownApp) {
+			self::$APP_PATH = iPHP_APP_DIR . '/' . $ownApp[0];
+			self::$APP_TPL  = self::$APP_PATH . '/admincp';
+			self::$APP_FILE = self::$APP_PATH . '/'.$ownApp[1];
+			$appName = $ownApp[0].$ownApp[2].'Admincp';
+		}
+
+		is_file(self::$APP_FILE) OR iPHP::throwException('运行出错！找不到文件: <b>' . $appName . '.php</b>', 1002);
 
 		define('APP_URI', __ADMINCP__ . '=' . $app);
 		define('APP_FURI', APP_URI . '&frame=iPHP');
@@ -100,10 +105,7 @@ class admincp {
 		define('APP_BOXID', self::$APP_NAME . '-box');
 		define('APP_FORMID', 'iCMS-' . APP_BOXID);
 
-		is_file(self::$APP_FILE) OR iPHP::throwException('运行出错！找不到文件: <b>' . self::$APP_NAME . '.app.php</b>', 1002);
 		iPHP::import(self::$APP_FILE);
-		$appName = self::$APP_NAME . 'App';
-		$ownAdmincp && $appName = self::$APP_NAME . 'Admincp';
 		self::$app = new $appName();
 		$app_methods = get_class_methods($appName);
 		in_array(self::$APP_METHOD, $app_methods) OR iPHP::throwException('运行出错！ <b>' . self::$APP_NAME . '</b> 类中找不到方法定义: <b>' . self::$APP_METHOD . '</b>', 1003);
@@ -131,14 +133,23 @@ class admincp {
 		}
 		return new $appName();
 	}
-
-	public static function view($p = NULL, $base = false) {
+	// public static function set_app_tpl($app){
+	// 	self::$APP_TPL = iPHP_APP_DIR.'/'.$app.'/admincp';
+	// }
+	public static function view($p = NULL, $app=null) {
 		if ($p === NULL && self::$APP_NAME) {
 			$p = self::$APP_NAME;
 			self::$APP_DO && $p .= '.' . self::$APP_DO;
 		}
-		$path = self::$APP_TPL . '/' . $p . '.php';
-		$base && $path = ACP_PATH . '/template/' . $p . '.php';
+		$APP_TPL = self::$APP_TPL;
+		if($app){
+			if($app=='admincp'){
+				$APP_TPL = ACP_PATH . '/template';
+			}else{
+				$APP_TPL = iPHP_APP_DIR.'/'.$app.'/admincp';
+			}
+		}
+		$path = $APP_TPL . '/' . $p . '.php';
 		return $path;
 	}
 
@@ -198,7 +209,7 @@ class admincp {
 			iPHP::alert('您没有相关权限!');
 			exit;
 		} elseif ($ret == 'page') {
-			include self::view("admincp.permission", true);
+			include self::view("admincp.permission",'admincp');
 			exit;
 		}
 	}
@@ -215,15 +226,15 @@ class admincp {
 		}
 		$navbar === false && $body_class = 'iframe ';
 
-		include self::view("admincp.header", true);
-		$navbar === true && include self::view("admincp.navbar", true);
+		include self::view("admincp.header",'admincp');
+		$navbar === true && include self::view("admincp.navbar",'admincp');
 	}
 
 	public static function foot() {
-		include self::view("admincp.footer", true);
+		include self::view("admincp.footer",'admincp');
 	}
 	public static function picBtnGroup($callback, $indexid = 0, $type = 'pic') {
-		include self::view("admincp.picBtnGroup", true);
+		include self::view("admincp.picBtnGroup",'admincp');
 	}
 
 	public static function getProp($field, $val = NULL, /*$default=array(),*/ $out = 'option', $url = "", $type = "") {

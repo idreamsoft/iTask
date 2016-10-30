@@ -156,7 +156,7 @@ class settingApp{
         $this->write();
     }
     function view($that){
-        include admincp::view('setting',true);
+        include admincp::view('setting',null,true);
         // $app =
         // print_r(admincp::$APP_NAME);
     }

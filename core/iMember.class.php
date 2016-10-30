@@ -18,7 +18,7 @@ class iMember{
     public static $cpower       = array();
     public static $AJAX         = false;
     public static $AUTH         = 'iCMS_AUTH';
-    public static $LOGIN_TPL    = './';
+    public static $LOGIN_PAGE   = 'Login.php';
     private static $LOGIN_COUNT = 0;
 
     public static function check($a,$p) {
@@ -66,7 +66,7 @@ class iMember{
 	public static function LoginPage(){
 		self::$AJAX && iPHP::json(array('code'=>0));
         iPHP::set_cookie(self::$AUTH,'',-31536000);
-		include self::$LOGIN_TPL.'/template/admincp.login.php';
+		include self::$LOGIN_PAGE;
 		exit;
 	}
 	//注销
@@ -85,4 +85,4 @@ class iMember{
         return false;
 	}
 }
-?>
+
